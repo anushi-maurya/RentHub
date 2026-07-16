@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Profile - RentHub</title>
+</head>
+<body>
+
+<h2>Edit Profile</h2>
+
+<form id="editForm">
+    <label>Name:</label><br>
+    <input type="text" id="name"><br><br>
+
+    <label>Email:</label><br>
+    <input type="email" id="email"><br><br>
+
+    <label>Phone:</label><br>
+    <input type="text" id="phone"><br><br>
+
+    <button type="submit">Update Profile</button>
+</form>
+
+<br>
+<button onclick="goBack()">Cancel</button>
+
+<script>
+
+const userId = localStorage.getItem("userId");
+console.log("User ID:", userId);
+
+// Load existing data
+fetch(`http://localhost:8080/api/users/${userId}`)
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("name").value = data.name;
+        document.getElementById("email").value = data.email;
+        document.getElementById("phone").value = data.phone;
+    })
+    .catch(err => console.log("Fetch Error:", err));
+
+// Update Profile
+document.getElementById("editForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const updatedUser = {
+        name: document.getElementById("name").value,
+        email: document.getElementById("email").value,
+        phone: document.getElementById("phone").value
+    };
+
+    fetch(`http://localhost:8080/api/users/${userId}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(updatedUser)
+    })
+    .then(response => {
+        console.log("Status:", response.status);
+        return response.json();
+    })
+    .then(data => {
+        alert("Profile Updated Successfully!");
+        window.location.href = "owner-profile.html";
+    })
+    .catch(error => {
+        console.error("Update Error:", error);
+        alert("Update Failed");
+    });
+});
+
+function goBack() {
+    window.location.href = "owner-profile.html";
+}
+
+
+</script>
+
+</body>
+</html>

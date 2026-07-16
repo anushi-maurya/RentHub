@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Tenant Dashboard - RentHub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f5f7fa;
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 22px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+        }
+
+        .property-img {
+            height: 180px;
+            object-fit: cover;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <span class="navbar-brand">RentHub</span>
+        <button class="btn btn-outline-light me-2" onclick="showSection('requests')">My Requests</button>
+        <a href="/edit-profile.html" class="btn btn-outline-light me-2">Edit Profile</a>
+        <button class="btn btn-danger" onclick="logout()">Logout</button>
+    </div>
+</nav>
+
+<div class="container mt-4">
+
+    <!-- Search and Filter bar -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <input type="text" id="searchCity" class="form-control"
+               placeholder="Search by city">
+    </div>
+    <div class="col-md-2">
+        <select id="filterType" class="form-select">
+            <option value="">All Types</option>
+            <option value="ROOM">Room</option>
+            <option value="PG">PG</option>
+            <option value="FLAT">Flat</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <select id="filterFurnished" class="form-select">
+            <option value="">Any Furnished</option>
+            <option value="YES">Furnished</option>
+            <option value="NO">Unfurnished</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <input type="number" id="filterRent" class="form-control"
+               placeholder="Max Rent">
+    </div>
+    <div class="col-md-2">
+        <button class="btn btn-primary w-100" onclick="search()">
+            Search
+        </button>
+    </div>
+    <div class="col-md-1">
+        <button class="btn btn-secondary w-100" onclick="clearFilters()">
+            Clear
+        </button>
+    </div>
+</div>
+    <div id="section-properties">
+    <h4 class="mb-3">Available Properties</h4>
+    <div class="row" id="property-list"></div>
+    </div>
+
+    
+    <div id="section-requests" style="display:none;">
+    <h4 class="mb-3">My Rental Requests</h4>
+    <div id="requests-list"></div>
+    </div>
+
+</div>
+
+<script>
+const token = localStorage.getItem("token");
+const tenantId = localStorage.getItem("userId");
+
+if (!token) {
+    alert("Please login first");
+    window.location.href = "/login.html";
+}
+
+function logout() {
+    localStorage.removeItem("token");
+    window.location.href = "/login.html";
+}
+
+function showSection(name) {
+    document.getElementById("section-properties").style.display = name === "properties" ? "block" : "none";
+    document.getElementById("section-requests").style.display   = name === "requests"   ? "block" : "none";
+    if (name === "requests") loadMyRequests();
+}
+
+function loadMyRequests() {
+    const container = document.getElementById("requests-list");
+    container.innerHTML = "<p class='text-muted'>Loading...</p>";
+
+    fetch("/api/requests/tenant/" + tenantId, {
+        headers: { "Authorization": "Bearer " + token }
+    })
+    .then(res => res.json())
+    .then(requests => {
+        if (requests.length === 0) {
+            container.innerHTML = "<p class='text-muted'>No requests sent yet.</p>";
+            return;
+        }
+
+        let html = "";
+        requests.forEach(r => {
+            const badgeColor =
+                r.status === "APPROVED" ? "success" :
+                r.status === "REJECTED" ? "danger"  : "warning";
+
+            html += `
+            <div class="card mb-3 p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-1">Property ID: ${r.propertyId}</h6>
+                        <small class="text-muted">Request ID: ${r.id}</small>
+                    </div>
+                    <span class="badge bg-${badgeColor} fs-6">${r.status}</span>
+                </div>
+            </div>`;
+        });
+
+        container.innerHTML = html;
+    })
+    .catch(() => {
+        container.innerHTML = "<p class='text-danger'>Failed to load requests.</p>";
+    });
+}
+
+function loadProperties(url = "/api/properties") {
+    fetch(url, {
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        let cards = "";
+
+        data.forEach(p => {
+        	if (p.status === "BOOKED") return;
+
+            const imageUrl = p.imageName
+                ? "/uploads/" + p.imageName
+                : "https://via.placeholder.com/400x200";
+
+            cards += `
+            	<div class="col-md-4 mb-4">
+            	    <a href="/property.html?id=${p.id}&ownerId=${p.owner?.id}" 
+            	       style="text-decoration:none; color:inherit;">
+            	        <div class="card">
+            	            <img src="${imageUrl}" class="property-img">
+
+            	            <div class="p-3">
+            	                <h5>${p.title}</h5>
+            	                <p class="text-muted">${p.city}, ${p.area}</p>
+
+            	                <div>
+            	                    <p style="font-size:22px; font-weight:600; margin:0;">
+            	                        ₹${Number(p.rent).toLocaleString()}
+            	                    </p>
+            	                    <span style="color:gray; font-size:14px;">
+            	                        per month
+            	                    </span>
+            	                </div>
+            	            </div>
+            	        </div>
+            	    </a>
+            	</div>`;
+        });
+
+        document.getElementById("property-list").innerHTML = cards;
+    });
+}
+
+function search() {
+    const city      = document.getElementById("searchCity").value;
+    const type      = document.getElementById("filterType").value;
+    const furnished = document.getElementById("filterFurnished").value;
+    const maxRent   = document.getElementById("filterRent").value;
+
+    let url = "/api/properties/filter?";
+    if (city)      url += "city="      + city      + "&";
+    if (type)      url += "type="      + type      + "&";
+    if (furnished) url += "furnished=" + furnished + "&";
+    if (maxRent)   url += "maxRent="   + maxRent   + "&";
+
+    loadProperties(url);
+}
+
+function clearFilters() {
+    document.getElementById("searchCity").value    = "";
+    document.getElementById("filterType").value    = "";
+    document.getElementById("filterFurnished").value = "";
+    document.getElementById("filterRent").value    = "";
+    loadProperties();
+}
+
+// Initial load
+loadProperties();
+</script>
+
+</body>
+</html>
