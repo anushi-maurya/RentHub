@@ -3,6 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <title>Edit Profile - RentHub</title>
+    <style>
+    body {
+        
+    margin: 0;
+    background: #f4f6f9;
+    display: flex;
+    flex-direction: column;   /* Add this */
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+
+    }
+
+    form {
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        width: 350px;
+    }
+
+    h2 {
+        text-align: center;
+        color: #198754;
+        margin-bottom: 20px;
+    }
+
+    label {
+        font-weight: bold;
+    }
+
+    input {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        box-sizing: border-box;
+    }
+
+    button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 10px;
+    }
+
+    button[type="submit"] {
+        background-color: #198754;
+        color: white;
+        width: 100%;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #157347;
+    }
+
+    button:last-of-type {
+        background-color: #6c757d;
+        color: white;
+        width: 100%;
+    }
+
+    button:last-of-type:hover {
+        background-color: #5c636a;
+    }
+</style>
 </head>
 <body>
 
@@ -19,10 +89,11 @@
     <input type="text" id="phone"><br><br>
 
     <button type="submit">Update Profile</button>
+    
+    <button onclick="goBack()">Cancel</button>
 </form>
 
-<br>
-<button onclick="goBack()">Cancel</button>
+
 
 <script>
 

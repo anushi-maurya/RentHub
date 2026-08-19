@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Tenant Dashboard - RentHub</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         body {
             background: #f5f7fa;
@@ -15,32 +15,64 @@
             font-size: 22px;
         }
 
-        .card {
-            border: none;
-            border-radius: 14px;
-            overflow: hidden;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.1);
-            transition: 0.3s;
-        }
+         .card{
+         margin-bottom:25px;
+         border:none;
+         border-radius:16px;
+         overflow:hidden;
+          box-shadow:0 4px 14px rgba(0,0,0,.1);
+          transition:.3s;
+}
 
-        .card:hover {
-            transform: translateY(-4px);
-        }
+.card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 10px 25px rgba(0,0,0,.18);
+}
+.property-img{
+    width:100%;
+    height:240px;
+    object-fit:cover;
+}
 
-        .property-img {
-            height: 180px;
-            object-fit: cover;
-            width: 100%;
-        }
+.card h5{
+    font-size:24px;
+    font-weight:600;
+    margin-bottom:8px;
+}
+
+.card .text-muted{
+    font-size:18px;
+}
+
+.badge{
+    border-radius:20px;
+    padding:6px 12px;
+    font-size:12px;
+}
+
+.card p{
+    margin-bottom:10px;
+}
+.form-control,
+.form-select{
+    border-radius:10px;
+    height:48px;
+}
+
+.btn{
+    border-radius:10px;
+    height:48px;
+}
+
     </style>
 </head>
 
 <body>
 
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color:#111827;">
     <div class="container">
-        <span class="navbar-brand">RentHub</span>
+        <span class="navbar-brand" style="color:#4ade80;">🏠 RentHub</span>
         <button class="btn btn-outline-light me-2" onclick="showSection('requests')">My Requests</button>
         <a href="/edit-profile.html" class="btn btn-outline-light me-2">Edit Profile</a>
         <button class="btn btn-danger" onclick="logout()">Logout</button>
@@ -75,7 +107,7 @@
                placeholder="Max Rent">
     </div>
     <div class="col-md-2">
-        <button class="btn btn-primary w-100" onclick="search()">
+        <button class="btn btn-primary w-100" onclick="search()" style="background-color:#198754; color:white; border:none">
             Search
         </button>
     </div>
@@ -175,7 +207,7 @@ function loadProperties(url = "/api/properties") {
                 : "https://via.placeholder.com/400x200";
 
             cards += `
-            	<div class="col-md-4 mb-4">
+            	<div class="col-lg-4 col-md-6 mb-4">
             	    <a href="/property.html?id=${p.id}&ownerId=${p.owner?.id}" 
             	       style="text-decoration:none; color:inherit;">
             	        <div class="card">
@@ -183,15 +215,19 @@ function loadProperties(url = "/api/properties") {
 
             	            <div class="p-3">
             	                <h5>${p.title}</h5>
-            	                <p class="text-muted">${p.city}, ${p.area}</p>
+            	                <p class="text-muted mb-1"> 
+            	                <i class="bi bi-geo-alt-fill"></i>
+            	                ${p.city}, ${p.area}
+            	                </p>
 
             	                <div>
-            	                    <p style="font-size:22px; font-weight:600; margin:0;">
-            	                        ₹${Number(p.rent).toLocaleString()}
-            	                    </p>
-            	                    <span style="color:gray; font-size:14px;">
-            	                        per month
-            	                    </span>
+            	                <p style="font-size:22px; font-weight:700; color:#198754; margin-bottom:8px;">
+            	                ₹${Number(p.rent).toLocaleString()}/month
+            	                </p>
+
+            	                <span class="badge rounded-pill bg-success px-3 py-2">
+            	                ${p.type}
+            	            </span> 
             	                </div>
             	            </div>
             	        </div>

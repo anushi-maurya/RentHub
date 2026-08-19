@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Owner Dashboard - RentHub</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         body {
             background-color: #f5f7fa;
@@ -12,7 +12,7 @@
 
         .sidebar {
             height: 100vh;
-            background: #212529;
+            background: #111827;
             color: white;
             padding-top: 20px;
         }
@@ -37,7 +37,9 @@
         }
 
         .card:hover {
-            transform: translateY(-4px);
+        transform: translateY(-6px);
+         box-shadow: 0 10px 25px rgba(0,0,0,.18);
+
         }
 
         .property-img {
@@ -63,7 +65,7 @@
 
         <!-- Sidebar -->
         <div class="col-md-2 sidebar">
-            <h4 class="text-center">RentHub</h4>
+            <h4 class="text-center" style="color:#4ade80;">🏠 RentHub</h4>
             <a href="#">Dashboard</a>
             <a href="/add-property.html">Add Property</a>
             <a href="#" onclick="showRequests()">Rental Requests</a>
@@ -138,31 +140,31 @@ fetch("/api/properties", {
             : "https://via.placeholder.com/400x200";
 
         cards += `
-        <div class="col-md-4 mb-4">
+        	<div class="col-lg-4 col-md-6 mb-4">
             <div class="card">
 
                 <img src="${imageUrl}" class="property-img">
 
                 <div class="p-3">
                     <div class="d-flex justify-content-between">
-                        <h5>${p.title}</h5>
+                        <h5 class="fw-bold mb-2">${p.title}</h5>
                         <span class="badge ${statusClass}">
                             ${p.status || "ACTIVE"}
                         </span>
                     </div>
 
-                    <p class="text-muted">${p.city}, ${p.area}</p>
+                    <p class="text-muted mb-1">
+                    <i class="bi bi-geo-alt-fill"></i> ${p.city}, ${p.area}
+                    </p>
 
                     <div>
-                        <p style="font-size:22px; font-weight:600; margin:0;">
-                            ₹${Number(p.rent).toLocaleString()}
+                        <p style="font-size:30px; font-weight:bold; color:#198754; margin:0;">
+                        ₹${Number(p.rent).toLocaleString()}/month
                         </p>
-                        <span style="color:gray; font-size:14px;">
-                            per month
-                        </span>
+                       
                     </div>
 
-                    <div class="d-flex gap-2 mt-3">
+                    <div class="d-grid gap-2 mt-3">
                         <button class="btn btn-primary btn-sm"
                             onclick="editProperty(${p.id})">
                             Edit
