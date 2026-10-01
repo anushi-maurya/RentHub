@@ -49,7 +49,7 @@ function loadProperties(url) {
             <div class="col-lg-4 col-md-6 mb-4">
                 <a href="/login.html" style="text-decoration:none; color:inherit;">
                     <div class="card shadow-sm h-100 border-0" style="cursor:pointer; transition:.3s;">
-                        <img src="${p.imageName ? '/uploads/' + p.imageName : 'https://placehold.co/400x250'}"
+                        <img src="${p.imageName ? p.imageName : 'https://placehold.co/400x250'}"
                              class="card-img-top"
                              style="height:220px; object-fit:cover;">
                         <div class="card-body">

@@ -1,6 +1,7 @@
 package com.renthub.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.multipart.MultipartFile;
 import java.nio.file.*;
@@ -23,6 +24,9 @@ import com.renthub.entity.Property;
 import com.renthub.repository.PropertyRepository;
 import com.renthub.repository.UserRepository;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+
 
 @RestController
 @RequestMapping("/api/properties")
@@ -31,6 +35,8 @@ public class PropertyController {
     private PropertyRepository propertyRepository;
 	@Autowired
 	private UserRepository userRepository;
+	@Autowired
+	private Cloudinary cloudinary;
 
 
     @PostMapping("/add")
@@ -88,15 +94,13 @@ public class PropertyController {
             @RequestParam("description") String description
     ) throws IOException {
 
-        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-        Path uploadPath = Paths.get("uploads");
+    	Map<?, ?> uploadResult = cloudinary.uploader().upload(
+    	        file.getBytes(),
+    	        ObjectUtils.asMap("folder", "renthub/properties")
+    	);
 
-        if (!Files.exists(uploadPath)) {
-            Files.createDirectories(uploadPath);
-        }
-
-        Path filePath = uploadPath.resolve(fileName);
-        Files.write(filePath, file.getBytes());
+    	String imageUrl = (String) uploadResult.get("secure_url");
+    	System.out.println("CLOUDINARY IMAGE URL = " + imageUrl);
 
         Property property = new Property();
         property.setTitle(title);
@@ -107,10 +111,12 @@ public class PropertyController {
         property.setFurnished(furnished);
         property.setGender(gender);
         property.setDescription(description);
-        property.setImageName(fileName);
+        property.setImageName(imageUrl);
+        
 
         User owner = userRepository.findById(ownerId).orElse(null);
         property.setOwner(owner);
+        property.setStatus("ACTIVE");
 
         return propertyRepository.save(property);
     }
