@@ -136,7 +136,7 @@ fetch("/api/properties", {
             : "status-active";
 
         const imageUrl = p.imageName
-            ? "/uploads/" + p.imageName
+            ? p.imageName
             : "https://via.placeholder.com/400x200";
 
         cards += `
