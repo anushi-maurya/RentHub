@@ -20,7 +20,7 @@ fetch("/api/properties/" + propertyId)
 	window.currentProperty = p;
 
     const imageUrl = p.imageName
-        ? "/uploads/" + p.imageName
+        ? p.imageName
         : "https://via.placeholder.com/800x400";
 
     const html = `

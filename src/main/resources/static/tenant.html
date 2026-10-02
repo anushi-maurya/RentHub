@@ -203,7 +203,7 @@ function loadProperties(url = "/api/properties") {
         	if (p.status === "BOOKED") return;
 
             const imageUrl = p.imageName
-                ? "/uploads/" + p.imageName
+                ? p.imageName
                 : "https://via.placeholder.com/400x200";
 
             cards += `
